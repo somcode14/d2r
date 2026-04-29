@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>D2R Distance System</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f0f2f5;
+      --card:      #ffffff;
+      --border:    #e2e6ea;
+      --primary:   #1a56db;
+      --primary-h: #1344b5;
+      --success:   #057a55;
+      --success-bg:#ecfdf5;
+      --error:     #c81e1e;
+      --error-bg:  #fef2f2;
+      --warn:      #92400e;
+      --warn-bg:   #fffbeb;
+      --text:      #111827;
+      --muted:     #6b7280;
+      --mono:      'DM Mono', monospace;
+      --sans:      'DM Sans', sans-serif;
+      --radius:    10px;
+      --shadow:    0 1px 4px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      height: 60px;
+      box-shadow: 0 2px 8px rgba(26,86,219,.3);
+    }
+    header .logo {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.18);
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-family: var(--mono);
+    }
+    header h1 { font-size: 17px; font-weight: 600; }
+    header p  { font-size: 12px; opacity: .75; margin-left: auto; }
+
+    /* ── Layout ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+      display: grid;
+      gap: 20px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .card h2 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h2 .icon { font-size: 16px; }
+
+    /* ── Result Banner ── */
+    .result-banner {
+      background: linear-gradient(135deg, #1a56db 0%, #1344b5 100%);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 4px 16px rgba(26,86,219,.25);
+    }
+    .result-banner .dist-value {
+      font-family: var(--mono);
+      font-size: 36px;
+      font-weight: 500;
+      line-height: 1;
+    }
+    .result-banner .dist-unit { font-size: 14px; opacity: .75; margin-top: 4px; }
+    .result-banner .dist-info { font-size: 13px; opacity: .85; margin-top: 6px; }
+    .result-banner .route {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .result-banner .divider { flex: 1; }
+
+    /* ── Flash Messages ── */
+    .flash { padding: 12px 16px; border-radius: 8px; font-size: 13px; margin-bottom: 4px; }
+    .flash.success { background: var(--success-bg); color: var(--success); border: 1px solid #a7f3d0; }
+    .flash.error   { background: var(--error-bg);   color: var(--error);   border: 1px solid #fecaca; }
+    .flash.warning { background: var(--warn-bg);    color: var(--warn);    border: 1px solid #fde68a; }
+
+    /* ── Forms ── */
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    .field { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 140px; }
+    .field label { font-size: 12px; font-weight: 500; color: var(--muted); }
+
+    select, input[type="text"], input[type="number"] {
+      font-family: var(--sans);
+      font-size: 14px;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text);
+      width: 100%;
+      transition: border-color .15s;
+    }
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,86,219,.1);
+    }
+
+    button, .btn {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      padding: 9px 20px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    button:hover, .btn:hover { background: var(--primary-h); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+    }
+    .btn-ghost:hover { background: #eff4ff; }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; margin-top: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      background: var(--bg);
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f9fafb; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-blue   { background: #eff4ff; color: var(--primary); }
+    .badge-green  { background: var(--success-bg); color: var(--success); }
+
+    /* ── Nav tabs ── */
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tabs a {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 6px;
+      transition: all .15s;
+    }
+    .tabs a:hover { background: #eff4ff; color: var(--primary); }
+
+    /* ── File Input ── */
+    .file-area {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color .15s;
+      cursor: pointer;
+    }
+    .file-area:hover { border-color: var(--primary); }
+    .file-area input[type="file"] { display: none; }
+    .file-area label { cursor: pointer; font-size: 13px; color: var(--muted); }
+    .file-area .file-name { margin-top: 8px; font-size: 13px; font-family: var(--mono); color: var(--primary); }
+
+    /* ── Helper text ── */
+    .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      header { padding: 0 16px; }
+      header p { display: none; }
+      .card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <span class="logo">D2R</span>
+  <h1>Auto Distance Calculation System</h1>
+  <p>BRD v1.0 &nbsp;|&nbsp; Dispatch to Retail</p>
+</header>
+
+<main>
+
+  <!-- ══ FLASH MESSAGES ══ -->
+  <!-- These are temporary notifications shown after form submissions -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- ══ RESULT BANNER ══ -->
+  <!-- Shows calculation result when available -->
+  {% if distance %}
+  <div class="result-banner">
+    <div>
+      <div class="route">{{ source }} → {{ destination }}</div>
+      <div class="dist-value">{{ distance }}</div>
+      <div class="dist-unit">kilometres</div>
+    </div>
+    <div class="divider"></div>
+    <div class="dist-info">📋 {{ msg }}</div>
+  </div>
+  {% endif %}
+
+  <!-- ══ CALCULATE DISTANCE ══ -->
+  <div class="card">
+    <h2><span class="icon">📍</span> Calculate Distance</h2>
+    <!-- BRD Logic: System checks DB first, calculates if not found -->
+    <form method="POST" action="/calculate">
+      <div class="form-row">
+        <div class="field">
+          <label for="source">Source City</label>
+          <select name="source" id="source">
+            {% for loc in locations %}
+              <option {% if loc == source %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label for="destination">Destination City</label>
+          <select name="destination" id="destination">
+            {% for loc in locations %}
+              <option {% if loc == destination %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit">Calculate →</button>
+      </div>
+    </form>
+    <p class="hint">System checks Distance Master DB first. If not found, calculates using Haversine formula and saves the result.</p>
+  </div>
+
+  <!-- ══ MANUAL OVERRIDE ══ -->
+  <div class="card">
+    <h2><span class="icon">✏️</span> Manual Override</h2>
+    <!-- Used when actual road distance differs from calculated straight-line distance -->
+    <form method="POST" action="/override">
+      <div class="form-row">
+        <div class="field">
+          <label for="o-source">Source City</label>
+          <input type="text" name="source" id="o-source" placeholder="e.g. Patna" required />
+        </div>
+        <div class="field">
+          <label for="o-dest">Destination City</label>
+          <input type="text" name="destination" id="o-dest" placeholder="e.g. Delhi" required />
+        </div>
+        <div class="field">
+          <label for="o-dist">New Distance (km)</label>
+          <input type="number" name="new_distance" id="o-dist" placeholder="e.g. 1000" step="0.01" min="0.01" required />
+        </div>
+        <div class="field" style="flex:2">
+          <label for="o-reason">Reason for Override</label>
+          <input type="text" name="reason" id="o-reason" placeholder="e.g. Actual road distance via NH-19" required />
+        </div>
+        <button type="submit">Apply Override</button>
+      </div>
+    </form>
+    <p class="hint">All overrides are saved to the Audit Log for traceability.</p>
+  </div>
+
+  <!-- ══ BULK CSV UPLOAD ══ -->
+  <div class="card">
+    <h2><span class="icon">📂</span> Bulk Upload (CSV)</h2>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+      <div class="file-area" onclick="document.getElementById('csvFile').click()">
+        <input type="file" name="file" id="csvFile" accept=".csv" onchange="showFileName(this)" />
+        <label>Click to select CSV file</label>
+        <div class="file-name" id="fileName">No file selected</div>
+      </div>
+      <p class="hint" style="margin-top: 10px">
+        CSV must have columns: <code>source</code>, <code>destination</code>
+        &nbsp;&nbsp;Example: <code>Patna,Delhi</code>
+      </p>
+      <div style="margin-top: 14px">
+        <button type="submit">Upload & Process</button>
+      </div>
+    </form>
+
+    <!-- Show bulk results table if data is available -->
+    {% if bulk %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Distance (km)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in bulk %}
+          <tr>
+            <td>{{ row.source }}</td>
+            <td>{{ row.destination }}</td>
+            <td style="font-family: var(--mono)">{{ row.distance }}</td>
+            <td>
+              {% if "Fetched" in row.status %}
+                <span class="badge badge-blue">From DB</span>
+              {% else %}
+                <span class="badge badge-green">New</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ══ AUDIT LOG SECTION ══ -->
+  <div class="card">
+    <h2><span class="icon">🗒️</span> Audit Log</h2>
+    <div class="tabs">
+      <a href="/history">View All Override Records →</a>
+    </div>
+
+    <!-- Show audit logs if returned from /history route -->
+    {% if logs %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Old Distance</th>
+            <th>New Distance</th>
+            <th>Reason</th>
+            <th>Updated At</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td>{{ log[0] }}</td>
+            <td>{{ log[1] }}</td>
+            <td style="font-family: var(--mono)">{{ log[2] if log[2] else '—' }} km</td>
+            <td style="font-family: var(--mono)">{{ log[3] }} km</td>
+            <td>{{ log[4] }}</td>
+            <td style="color: var(--muted); font-size: 12px">{{ log[5] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+</main>
+
+<script>
+  // Show the selected file name in the upload area
+  function showFileName(input) {
+    const label = document.getElementById('fileName');
+    label.textContent = input.files.length > 0 ? input.files[0].name : 'No file selected';
+  }
+</script>
+
+</body>
+</html>
